@@ -1,0 +1,374 @@
+---------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\EconUser\Dropbox\Computational methods in economics\stata\lecture1\stat
+> ademo.log
+  log type:  text
+ opened on:  10 Jan 2017, 12:10:08
+
+. 
+. set more off
+
+. 
+. 
+. 
+. 
+. 
+. insheet using "country.csv"
+(5 vars, 70 obs)
+
+. 
+. /* Summary statistics */
+/ is not a valid command name
+r(199);
+
+. 
+. summarize
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     country |          0
+ countrycode |          0
+        year |         70      2005.5     2.89302       2001       2010
+        cgdp |         70    33960.11    6896.107       -999   48330.09
+         pop |         70    1.02e+08    8.52e+07       -999   3.09e+08
+
+. 
+. // Check part of the data
+/ is not a valid command name
+r(199);
+
+. 
+. list country* year pop in 5/10
+
+     +--------------------------------------+
+     | country   countr~e   year        pop |
+     |--------------------------------------|
+  5. |  Canada        CAN   2005   32245210 |
+  6. |  Canada        CAN   2006   32576070 |
+  7. |  Canada        CAN   2007   32927520 |
+  8. |  Canada        CAN   2008   33317660 |
+  9. |  Canada        CAN   2009   33726920 |
+     |--------------------------------------|
+ 10. |  Canada        CAN   2010   34126550 |
+     +--------------------------------------+
+
+. 
+. * Summarize population by year
+
+. 
+. tab year, sum(pop)
+
+            |           Summary of pop
+       year |        Mean   Std. Dev.       Freq.
+------------+------------------------------------
+       2001 |    92031026    93895172           7
+       2002 |   1.008e+08    87625622           7
+       2003 |   1.013e+08    88391443           7
+       2004 |   1.018e+08    89278614           7
+       2005 |   1.025e+08    90112482           7
+       2006 |   1.031e+08    91010524           7
+       2007 |   1.037e+08    91896995           7
+       2008 |   1.043e+08    92782906           7
+       2009 |   1.048e+08    93610989           7
+       2010 |   1.054e+08    94428451           7
+------------+------------------------------------
+      Total |   1.020e+08    85244886          70
+
+. 
+. bysort year: sum pop
+
+---------------------------------------------------------------------------------------------
+-> year = 2001
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    9.20e+07    9.39e+07       -999   2.85e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2002
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.01e+08    8.76e+07   3.14e+07   2.88e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2003
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.01e+08    8.84e+07   3.16e+07   2.90e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2004
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.02e+08    8.93e+07   3.19e+07   2.93e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2005
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.02e+08    9.01e+07   3.22e+07   2.96e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2006
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.03e+08    9.10e+07   3.26e+07   2.98e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2007
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.04e+08    9.19e+07   3.29e+07   3.01e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2008
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.04e+08    9.28e+07   3.33e+07   3.04e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2009
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.05e+08    9.36e+07   3.37e+07   3.07e+08
+
+---------------------------------------------------------------------------------------------
+-> year = 2010
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         pop |          7    1.05e+08    9.44e+07   3.41e+07   3.09e+08
+
+
+. 
+. 
+. 
+. // Recode -999 to missing
+/ is not a valid command name
+r(199);
+
+. 
+. recode pop cgdp (-999 = .)
+(pop: 1 changes made)
+(cgdp: 1 changes made)
+
+. 
+. 
+. 
+. // Prepare for merging
+/ is not a valid command name
+r(199);
+
+. 
+. sort countrycode year
+
+. 
+. save country, replace
+file country.dta saved
+
+. do "C:\Users\EconUser\AppData\Local\Temp\STD35000000.tmp"
+
+. clear
+
+. insheet using "country2.csv"
+(4 vars, 70 obs)
+
+. sort countrycode year
+
+. 
+end of do-file
+
+. do "C:\Users\EconUser\AppData\Local\Temp\STD35000000.tmp"
+
+. merge 1:1 countrycode year using country.dta
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             2
+        from master                         1  (_merge==1)
+        from using                          1  (_merge==2)
+
+    matched                                69  (_merge==3)
+    -----------------------------------------
+
+. tab _merge
+
+                 _merge |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |          1        1.41        1.41
+         using only (2) |          1        1.41        2.82
+            matched (3) |         69       97.18      100.00
+------------------------+-----------------------------------
+                  Total |         71      100.00
+
+. keep if _merge==3 
+(2 observations deleted)
+
+. drop _merge
+
+. save country2, replace
+file country2.dta saved
+
+. 
+end of do-file
+
+. preserve
+
+. 
+. collapse (sum) cgdp, by(country)
+
+. restore
+
+. 
+. 
+. 
+. // Calculate the difference between 1998 and 1995 population
+/ is not a valid command name
+r(199);
+
+. 
+. gen temp1=pop if year==1995
+(69 missing values generated)
+
+. 
+. egen temp2=max(temp1), by(countrycode)
+(69 missing values generated)
+
+. 
+. gen temp3=pop-temp2 if year==1998
+(69 missing values generated)
+
+. 
+. egen diff=max(temp3), by(countrycode)
+(69 missing values generated)
+
+. 
+. drop temp*
+
+. browse
+
+. gen temp1=pop if year==2005
+(62 missing values generated)
+
+. 
+. egen temp2=max(temp1), by(countrycode)
+
+. 
+. gen temp3=pop-temp2 if year==2008
+(62 missing values generated)
+
+. 
+. egen diff=max(temp3), by(countrycode)
+variable diff already defined
+r(110);
+
+. 
+. drop temp*
+
+. drop diff
+
+. gen temp1=pop if year==2005
+(62 missing values generated)
+
+. 
+. egen temp2=max(temp1), by(countrycode)
+
+. 
+. gen temp3=pop-temp2 if year==2008
+(62 missing values generated)
+
+. 
+. egen diff=max(temp3), by(countrycode)
+
+. 
+. drop temp*
+
+. encode country, gen(ctyno)
+
+. 
+. codebook ctyno
+
+---------------------------------------------------------------------------------------------
+ctyno                                                                             (unlabeled)
+---------------------------------------------------------------------------------------------
+
+                  type:  numeric (long)
+                 label:  ctyno
+
+                 range:  [1,7]                        units:  1
+         unique values:  7                        missing .:  0/69
+
+            tabulation:  Freq.   Numeric  Label
+                             9         1  Canada
+                            10         2  France
+                            10         3  Germany
+                            10         4  Italy
+                            10         5  Japan
+                            10         6  United Kingdom
+                            10         7  United States
+
+. gen largepop=(pop>=100000000) if pop!=.
+(1 missing value generated)
+
+. 
+. tab largepop, m
+
+   largepop |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         48       69.57       69.57
+          1 |         20       28.99       98.55
+          . |          1        1.45      100.00
+------------+-----------------------------------
+      Total |         69      100.00
+
+. fillin countrycode year
+
+. keep countrycode year pop
+
+. 
+. reshape wide pop, i(countrycode) j(year)
+(note: j = 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       70   ->       7
+Number of variables                   3   ->      11
+j variable (10 values)             year   ->   (dropped)
+xij variables:
+                                    pop   ->   pop2001 pop2002 ... pop2010
+-----------------------------------------------------------------------------
+
+. reshape long pop, i(countrycode) j(year)
+(note: j = 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                        7   ->      70
+Number of variables                  11   ->       3
+j variable (10 values)                    ->   year
+xij variables:
+            pop2001 pop2002 ... pop2010   ->   pop
+-----------------------------------------------------------------------------
+
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\EconUser\Dropbox\Computational methods in economics\stata\lecture1\stat
+> ademo.log
+  log type:  text
+ closed on:  10 Jan 2017, 12:13:31
+---------------------------------------------------------------------------------------------
